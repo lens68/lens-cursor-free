@@ -10,7 +10,8 @@ import toIco from 'to-ico';
 
 const root = process.cwd();
 const svgPath = join(root, 'resources', 'icon-source.svg');
-const out = join(root, 'resources', 'icon.ico');
+const outIco = join(root, 'resources', 'icon.ico');
+const outPng = join(root, 'resources', 'icon.png');
 const sizes = [16, 24, 32, 48, 64, 128, 256];
 
 if (!existsSync(svgPath)) {
@@ -29,6 +30,16 @@ const pngBuffers = await Promise.all(
 );
 
 const ico = await toIco(pngBuffers);
-if (existsSync(out)) unlinkSync(out);
-writeFileSync(out, ico);
-console.log(`generate-icon: wrote ${out} (${ico.length} bytes, sizes ${sizes.join(', ')})`);
+if (existsSync(outIco)) unlinkSync(outIco);
+writeFileSync(outIco, ico);
+
+const png1024 = await sharp(svg, { density: 288 })
+  .resize(1024, 1024, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+  .png()
+  .toBuffer();
+if (existsSync(outPng)) unlinkSync(outPng);
+writeFileSync(outPng, png1024);
+
+console.log(
+  `generate-icon: wrote ${outIco} (${ico.length} B) and ${outPng} (${png1024.length} B)`,
+);

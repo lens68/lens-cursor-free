@@ -11,12 +11,14 @@
     "build": "npm run prebuild && tsc -p tsconfig.json && node scripts/gen-user-messages.mjs && node scripts/copy-shell-assets.mjs",
     "build:full": "node scripts/build-full.mjs",
     "pretest": "tsc -p tsconfig.json",
-    "test": "node --test scripts/gen-build-config.test.mjs scripts/gen-user-messages.test.mjs scripts/user-facing-error.test.mjs scripts/status-ui.test.mjs scripts/prepare-build-config.test.mjs scripts/check-release-config.test.mjs scripts/build-flags.test.mjs",
+    "test": "node --test scripts/gen-build-config.test.mjs scripts/gen-user-messages.test.mjs scripts/user-facing-error.test.mjs scripts/status-ui.test.mjs scripts/prepare-build-config.test.mjs scripts/check-release-config.test.mjs scripts/validate-build-config.test.mjs scripts/build-flags.test.mjs",
     "start": "npm run link:core && npm run build && electron .",
     "dev": "npm run start",
     "icon": "node scripts/generate-icon.mjs",
-    "dist:dir": "node scripts/pre-dist-clean.mjs && node scripts/check-release-config.mjs && npm run build:full && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --dir --win --x64 && node scripts/verify-packaged-daemon.mjs",
-    "dist:win": "node scripts/require-local-core.mjs && node scripts/run-dist-win.mjs",
+    "dist:prod": "node scripts/run-dist-prod.mjs",
+    "dist:dir": "node scripts/run-dist-prod.mjs --dir",
+    "dist:win": "node scripts/run-dist-prod.mjs --win",
+    "dist:mac": "node scripts/run-dist-prod.mjs --mac",
     "dist:ops": "node scripts/prepare-build-config.mjs ops && node scripts/check-release-config.mjs --channel ops && npm run build:full && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win --x64 -c.nsis.artifactName=Relay-Setup-${version}-ops.${ext}",
     "dist:local": "node scripts/prepare-build-config.mjs local && node scripts/check-release-config.mjs --channel local && npm run build:full && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win --x64 --config.directories.output=release-build"
   },
@@ -99,6 +101,24 @@
       "installerHeaderIcon": "icon.ico",
       "shortcutName": "Relay",
       "artifactName": "Relay-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "icon": "resources/icon.png",
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "artifactName": "Relay-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "Relay ${version}"
     }
   }
 }

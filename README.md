@@ -34,8 +34,8 @@ Relay 桌面客户端的**可审计开源部分**：界面、Electron 壳、IPC 
 | 目标 | 是否可在本公开仓完成 | 配置如何注入 |
 |------|----------------------|--------------|
 | 信任层编译（`npm run build`） | **可以**（默认 `@relay/core` stub） | 无 `build-config.json` 时自动从 `build-config.local.example.json` 生成；`prebuild` 写入 `shared/build-config.ts` |
-| 完整安装包 / 换号能力 | **不可以单独完成** | 需私有仓 `lens-cursor-free-core` + `npm run link:core`；生产参数由维护者本地 `prepare-build-config prod` 或 CI Secret `BUILD_CONFIG_JSON` 注入 |
-| GitHub Release（打 `v*` tag） | 维护者 CI | `RELAY_CORE_DEPLOY_KEY` + `BUILD_CONFIG_JSON`（见私有仓 `docs/RELEASE-SETUP.md`） |
+| 完整安装包 / 换号能力 | **不可以单独完成** | 需私有仓 + `npm run link:core`；本机维护 **`build-config.json`**（真实 Hub/购买链接，已 gitignore），再 `npm run dist:prod` |
+| GitHub Release（打 `v*` tag） | 维护者 CI | `RELAY_CORE_DEPLOY_KEY` + `BUILD_CONFIG_JSON`（真实 JSON，非 example）；并行构建 **Windows + macOS** |
 
 仓库内**只提交模板**：`build-config.*.example.json` 与占位符版 `shared/build-config.ts`；真实 Hub / 购买链接等写在 **gitignore 的** `build-config.json` 或 CI Secret 中，构建时自动生成，勿手改 `shared/build-config.ts`。
 
@@ -47,14 +47,19 @@ npm run build    # 自动 ensure 本地 example → build-config.json → gen-bu
 npm test
 ```
 
-完整产品构建（**仅维护者**，需已授权访问私有核心仓库；发版与 Secrets 配置见私有仓文档）：
+完整产品构建（**仅维护者**，需已授权访问私有核心仓库；发版与 Secrets 见私有仓 `docs/RELEASE-SETUP.md`）：
 
 ```bash
 git clone git@github.com:lens68/lens-cursor-free-core.git   # 与本作库同级目录
+# 在本仓库根目录创建 build-config.json（勿提交），填入真实 defaultHubUrl / purchaseUrl 等
 npm run link:core
-npm run build
-npm start
+npm run icon          # 生成 icon.ico + icon.png（Win / Mac）
+npm run dist:prod     # 当前系统：Windows → NSIS；macOS → DMG + ZIP
+# 或显式：npm run dist:win / npm run dist:mac
+npm start             # 开发运行（需 link:core + build）
 ```
+
+`npm run dist:prod` 会拒绝仍含 `hub.your-domain.com`、`shop.example.com` 等**模板占位**的配置；CI 通过 Secret `BUILD_CONFIG_JSON` 写入同等结构的 JSON。
 
 ## 安全反馈
 

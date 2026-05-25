@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-/** Prod release gate: no localhost Hub, enableOpsTools must be false. */
+/** Prod release gate: real Hub URL, icons per platform, enableOpsTools false. */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { validateProdBuildConfig } from './build-config-placeholders.mjs';
 
 const root = process.cwd();
 const args = process.argv.slice(2);
 let channel = 'prod';
+let platform = process.env.RELAY_DIST_PLATFORM?.trim() || (process.platform === 'darwin' ? 'mac' : 'win');
+
 for (let i = 0; i < args.length; i++) {
-  if (args[i] === '--channel' && args[i + 1]) {
-    channel = args[++i];
-  }
+  if (args[i] === '--channel' && args[i + 1]) channel = args[++i];
+  else if (args[i] === '--platform' && args[i + 1]) platform = args[++i];
 }
 
 if (channel === 'ops' || channel === 'local') {
@@ -19,24 +21,26 @@ if (channel === 'ops' || channel === 'local') {
 
 const path = join(root, 'build-config.json');
 if (!existsSync(path)) {
-  console.error('check-release-config: missing build-config.json — run prepare-build-config.mjs prod');
+  console.error(
+    'check-release-config: missing build-config.json — create locally or inject BUILD_CONFIG_JSON in CI',
+  );
   process.exit(1);
 }
 
 const cfg = JSON.parse(readFileSync(path, 'utf8'));
-const hub = String(cfg.defaultHubUrl ?? '').toLowerCase();
-const errors = [];
+const errors = [...validateProdBuildConfig(cfg, { requirePurchaseUrl: true })];
 
-if (!hub || hub.includes('127.0.0.1') || hub.includes('localhost')) {
-  errors.push(`defaultHubUrl must not be localhost (got ${cfg.defaultHubUrl})`);
-}
-if (cfg.enableOpsTools === true) {
-  errors.push('enableOpsTools must be false for production builds');
-}
-
-const iconPath = join(root, 'resources', 'icon.ico');
-if (!existsSync(iconPath)) {
-  errors.push('resources/icon.ico missing — required for release builds');
+if (platform === 'mac') {
+  const icns = join(root, 'resources', 'icon.icns');
+  const png = join(root, 'resources', 'icon.png');
+  if (!existsSync(icns) && !existsSync(png)) {
+    errors.push('resources/icon.icns or resources/icon.png missing — run npm run icon');
+  }
+} else {
+  const iconPath = join(root, 'resources', 'icon.ico');
+  if (!existsSync(iconPath)) {
+    errors.push('resources/icon.ico missing — run npm run icon');
+  }
 }
 
 if (errors.length) {
@@ -44,4 +48,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`check-release-config: ok (hub=${cfg.defaultHubUrl})`);
+console.log(`check-release-config: ok (hub=${cfg.defaultHubUrl}, platform=${platform})`);

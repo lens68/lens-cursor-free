@@ -16,12 +16,13 @@ function runCheck(dir, extraArgs = []) {
   );
 }
 
-test('check-release-config rejects localhost hub', () => {
+test('check-release-config rejects placeholder hub', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
   writeFileSync(
     join(dir, 'build-config.json'),
     JSON.stringify({
-      defaultHubUrl: 'http://127.0.0.1:8765',
+      defaultHubUrl: 'https://hub.your-domain.com',
+      purchaseUrl: 'https://shop.example.com/licenses',
       enableOpsTools: false,
     }),
   );
@@ -29,7 +30,24 @@ test('check-release-config rejects localhost hub', () => {
   writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
   const r = runCheck(dir);
   assert.notEqual(r.status, 0);
-  assert.match(r.stderr + r.stdout, /localhost/i);
+  assert.match(r.stderr + r.stdout, /defaultHubUrl/i);
+});
+
+test('check-release-config rejects localhost hub', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
+  writeFileSync(
+    join(dir, 'build-config.json'),
+    JSON.stringify({
+      defaultHubUrl: 'http://127.0.0.1:8765',
+      purchaseUrl: 'https://pay.vendor.internal/shop',
+      enableOpsTools: false,
+    }),
+  );
+  mkdirSync(join(dir, 'resources'), { recursive: true });
+  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
+  const r = runCheck(dir);
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr + r.stdout, /127\.0\.0\.1|production URL/i);
 });
 
 test('check-release-config rejects enableOpsTools true', () => {
@@ -37,7 +55,8 @@ test('check-release-config rejects enableOpsTools true', () => {
   writeFileSync(
     join(dir, 'build-config.json'),
     JSON.stringify({
-      defaultHubUrl: 'https://hub.example.com',
+      defaultHubUrl: 'https://hub.vendor.example',
+      purchaseUrl: 'https://pay.vendor.example/shop',
       enableOpsTools: true,
     }),
   );
@@ -53,7 +72,8 @@ test('check-release-config accepts valid prod config', () => {
   writeFileSync(
     join(dir, 'build-config.json'),
     JSON.stringify({
-      defaultHubUrl: 'https://hub.example.com',
+      defaultHubUrl: 'https://hub.vendor.example',
+      purchaseUrl: 'https://pay.vendor.example/shop',
       enableOpsTools: false,
     }),
   );

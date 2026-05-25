@@ -7,6 +7,12 @@ const root = process.cwd();
 const dest = join(root, 'build-config.json');
 
 if (!existsSync(dest)) {
+  if (process.env.RELAY_REQUIRE_BUILD_CONFIG === '1') {
+    console.error(
+      'ensure-build-config: missing build-config.json — add your production config (gitignored) or set BUILD_CONFIG_JSON in CI',
+    );
+    process.exit(1);
+  }
   const channel = process.env.RELAY_BUILD_CHANNEL?.trim() || 'local';
   const sources = {
     prod: 'build-config.prod.example.json',

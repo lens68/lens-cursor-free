@@ -13,20 +13,7 @@ const sources = {
   local: 'build-config.local.example.json',
 };
 
-/** Values in *.example.json that mean “fill in locally”. */
-const PLACEHOLDER_VALUES = new Set([
-  '',
-  'https://your-support-page.example.com',
-  'https://shop.example.com/licenses',
-  'https://your-shop.example.com/licenses',
-  'http://127.0.0.1:8765',
-  'https://hub.your-domain.com',
-]);
-
-function isPlaceholder(value) {
-  if (value == null) return true;
-  return PLACEHOLDER_VALUES.has(String(value).trim());
-}
+import { isPlaceholderValue as isPlaceholder } from './build-config-placeholders.mjs';
 
 function mergePreservedFields(next, previous) {
   if (!previous || typeof previous !== 'object') return next;

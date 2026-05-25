@@ -13,9 +13,17 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  build:
     if: github.repository == 'lens68/lens-cursor-free'
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            platform: win
+          - runner: macos-latest
+            platform: mac
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,9 +61,14 @@ jobs:
         working-directory: lens-cursor-free
         run: node scripts/write-build-config-from-secret.mjs
 
-      - name: Full build and dist
+      - name: Generate icons
+        working-directory: lens-cursor-free
+        run: npm run icon
+
+      - name: Full build and dist (${{ matrix.platform }})
         env:
           RELAY_CORE_PATH: ${{ github.workspace }}/lens-cursor-free-core
+          RELAY_DIST_PLATFORM: ${{ matrix.platform }}
         working-directory: lens-cursor-free
         run: |
           npm ci
@@ -63,12 +76,29 @@ jobs:
           node scripts/require-local-core.mjs
           npm run build
           npm test
-          npm run dist:dir
+          node scripts/run-dist-prod.mjs --${{ matrix.platform }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: relay-${{ matrix.platform }}
+          path: |
+            lens-cursor-free/release/Relay-Setup-*.exe
+            lens-cursor-free/release/Relay-*.dmg
+            lens-cursor-free/release/Relay-*.zip
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: github.repository == 'lens68/lens-cursor-free'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: |
-            lens-cursor-free/release/Relay-Setup-*.exe
-            lens-cursor-free/release/*-Setup-*.exe
+          files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

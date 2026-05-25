@@ -11,7 +11,7 @@
     "build": "npm run prebuild && tsc -p tsconfig.json && node scripts/gen-user-messages.mjs && node scripts/copy-shell-assets.mjs",
     "build:full": "node scripts/build-full.mjs",
     "pretest": "tsc -p tsconfig.json",
-    "test": "node --test scripts/gen-build-config.test.mjs scripts/gen-user-messages.test.mjs scripts/user-facing-error.test.mjs scripts/status-ui.test.mjs scripts/prepare-build-config.test.mjs scripts/check-release-config.test.mjs scripts/validate-build-config.test.mjs scripts/build-flags.test.mjs",
+    "test": "node --test scripts/gen-build-config.test.mjs scripts/gen-user-messages.test.mjs scripts/user-facing-error.test.mjs scripts/status-ui.test.mjs scripts/prepare-build-config.test.mjs scripts/check-release-config.test.mjs scripts/validate-build-config.test.mjs scripts/darwin-support.test.mjs scripts/build-flags.test.mjs",
     "start": "npm run link:core && npm run build && electron .",
     "dev": "npm run start",
     "icon": "node scripts/generate-icon.mjs",

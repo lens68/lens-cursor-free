@@ -11,7 +11,7 @@
 
 ---
 
-### 扫码加入 QQ 群（勿搜索群号），使用交流与问题反馈
+### 扫码加入 QQ 群，使用交流与问题反馈
 
 [![加入 QQ 群](img/qq-group.jpg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037)
 

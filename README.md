@@ -13,7 +13,15 @@
 
 ### 扫码加入 QQ 群，使用交流与问题反馈
 
-[![加入 QQ 群](img/qq-group.jpg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037)
+<table align="center">
+  <tr>
+    <td width="200" align="center">
+      <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037">
+        <img src="img/qq-group.jpg" width="200" height="200" alt="加入 QQ 群" />
+      </a>
+    </td>
+  </tr>
+</table>
 
 也可 [点击链接加群](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037)
 

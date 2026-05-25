@@ -61,6 +61,19 @@ npm start             # 开发运行（需 link:core + build）
 
 `npm run dist:prod` 会拒绝仍含 `hub.your-domain.com`、`shop.example.com` 等**模板占位**的配置；CI 通过 Secret `BUILD_CONFIG_JSON` 写入同等结构的 JSON。
 
+### macOS 功能说明
+
+| 能力 | macOS 支持情况 |
+|------|----------------|
+| Hub / 许可证 / 占号 UI | 支持（与 Windows 相同） |
+| Cursor 路径 / `state.vscdb` / `machineId` | 支持（`~/Library/Application Support/Cursor/...`） |
+| 关窗口保留占号 | 支持（关窗口不退出，需 **Dock 再点图标** 或 **Cmd+Q** 退出） |
+| 换号 / 注入 | 支持，但依赖本机 **Node.js 22+**（`PATH` 或 `CURSOR_FREE_NODE`），与 Windows 安装包相同 |
+| Cursor 安装位置 | 默认 `/Applications/Cursor.app` |
+| 首次打开未签名包 | 可能需右键「打开」或 `xattr -cr`（CI 未做 Apple 签名） |
+
+macOS 版与 Windows 共用私有核心；发版前请在实机 Mac 上验证一次完整换号流程。
+
 ## 安全反馈
 
 请通过 GitHub Security Advisories 或仓库 Issue 联系维护者（勿在公开 Issue 中粘贴许可证密钥或 Hub 管理凭据）。

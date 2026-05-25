@@ -37,7 +37,9 @@ let tray: Tray | null = null;
 
 function resolveWindowIcon(): string | undefined {
   const candidates = [
+    join(process.resourcesPath, 'icon.png'),
     join(process.resourcesPath, 'icon.ico'),
+    join(app.getAppPath(), 'resources', 'icon.png'),
     join(app.getAppPath(), 'resources', 'icon.ico'),
   ];
   for (const p of candidates) {
@@ -155,4 +157,10 @@ app.on('before-quit', (event) => {
 app.on('window-all-closed', () => {
   if (trayMinimizeEnabled() && tray) return;
   if (process.platform !== 'darwin') app.quit();
+});
+
+/** macOS: red-close keeps app in Dock; clicking Dock must reopen the window. */
+app.on('activate', () => {
+  if (process.platform !== 'darwin') return;
+  showMainWindow();
 });

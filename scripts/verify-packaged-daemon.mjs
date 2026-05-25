@@ -18,6 +18,8 @@ if (!platform) {
     (process.platform === 'darwin' ? 'mac' : 'win');
 }
 
+const macArch = process.env.RELAY_MAC_ARCH?.trim();
+
 const outputFlag = join(root, '.dist-output-dir');
 let outputDir = 'release';
 if (existsSync(outputFlag)) {
@@ -27,9 +29,12 @@ if (existsSync(outputFlag)) {
 let unpackedRoot;
 let appBinary;
 if (platform === 'mac') {
-  const macDir = join(root, outputDir, 'mac');
-  const macArm = join(root, outputDir, 'mac-arm64');
-  unpackedRoot = existsSync(macDir) ? macDir : macArm;
+  const candidates = [
+    macArch === 'arm64' ? join(root, outputDir, 'mac-arm64') : join(root, outputDir, 'mac'),
+    join(root, outputDir, 'mac-arm64'),
+    join(root, outputDir, 'mac'),
+  ];
+  unpackedRoot = candidates.find((p) => existsSync(join(p, 'Relay.app'))) ?? candidates[0];
   appBinary = join(unpackedRoot, 'Relay.app');
 } else {
   unpackedRoot = join(root, outputDir, 'win-unpacked');

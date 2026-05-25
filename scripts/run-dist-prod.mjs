@@ -52,8 +52,9 @@ if (platform === 'win') {
   ebArgs.unshift('--win', '--x64');
 } else {
   const macArch = process.env.RELAY_MAC_ARCH?.trim() || 'arm64';
-  console.log(`run-dist-prod: mac electron-builder arch=${macArch}`);
-  ebArgs.unshift('--mac', `--${macArch}`);
+  console.log(`run-dist-prod: mac electron-builder arch=${macArch} (dmg only)`);
+  ebArgs.push('-c.mac.target', JSON.stringify([{ target: 'dmg', arch: [macArch] }]));
+  ebArgs.unshift('--mac');
 }
 
 run(

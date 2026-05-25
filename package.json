@@ -1,0 +1,104 @@
+{
+  "name": "lens-cursor-free",
+  "version": "0.1.8",
+  "private": true,
+  "description": "Relay desktop open trust layer — UI, Electron shell, IPC contract",
+  "type": "module",
+  "main": "dist/electron/main.js",
+  "scripts": {
+    "link:core": "node scripts/link-core.mjs",
+    "prebuild": "node scripts/gen-app-version.mjs && node scripts/gen-build-config.mjs",
+    "build": "npm run prebuild && tsc -p tsconfig.json && node scripts/gen-user-messages.mjs && node scripts/copy-shell-assets.mjs",
+    "build:full": "node scripts/build-full.mjs",
+    "pretest": "tsc -p tsconfig.json",
+    "test": "node --test scripts/gen-build-config.test.mjs scripts/gen-user-messages.test.mjs scripts/user-facing-error.test.mjs scripts/status-ui.test.mjs scripts/prepare-build-config.test.mjs scripts/check-release-config.test.mjs scripts/build-flags.test.mjs",
+    "start": "npm run link:core && npm run build && electron .",
+    "dev": "npm run start",
+    "icon": "node scripts/generate-icon.mjs",
+    "dist:dir": "node scripts/pre-dist-clean.mjs && node scripts/check-release-config.mjs && npm run build:full && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --dir --win --x64 && node scripts/verify-packaged-daemon.mjs",
+    "dist:win": "node scripts/require-local-core.mjs && node scripts/run-dist-win.mjs",
+    "dist:ops": "node scripts/prepare-build-config.mjs ops && node scripts/check-release-config.mjs --channel ops && npm run build:full && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win --x64 -c.nsis.artifactName=Relay-Setup-${version}-ops.${ext}",
+    "dist:local": "node scripts/prepare-build-config.mjs local && node scripts/check-release-config.mjs --channel local && npm run build:full && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win --x64 --config.directories.output=release-build"
+  },
+  "dependencies": {
+    "@relay/core": "file:./packages/core-stub"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "cross-env": "^10.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "pngjs": "^7.0.0",
+    "rcedit": "^5.0.2",
+    "sharp": "^0.34.5",
+    "to-ico": "^1.1.5",
+    "typescript": "^5.8.3"
+  },
+  "build": {
+    "appId": "com.relay.desktop",
+    "productName": "Relay",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "dist/**/*",
+      "ui/**/*",
+      "package.json",
+      "!**/*.test.mjs",
+      "!**/*.md",
+      "!scripts/**"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "nodeGypRebuild": false,
+    "compression": "maximum",
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icon.ico",
+        "to": "icon.ico"
+      },
+      {
+        "from": "node_modules/@relay/core/dist/daemon",
+        "to": "daemon",
+        "filter": [
+          "inject-cli.mjs",
+          "cursor-process.mjs",
+          "profile-store.mjs",
+          "cursor-paths.mjs",
+          "cursor-paths.js",
+          "probed-auth-keys.json",
+          "probed-cache-keys.json"
+        ]
+      }
+    ],
+    "forceCodeSigning": false,
+    "afterPack": "./scripts/after-pack-embed-icon.mjs",
+    "win": {
+      "signAndEditExecutable": false,
+      "icon": "icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
+      "shortcutName": "Relay",
+      "artifactName": "Relay-Setup-${version}.${ext}"
+    }
+  }
+}

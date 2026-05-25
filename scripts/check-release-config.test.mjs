@@ -1,0 +1,77 @@
+import assert from 'node:assert/strict';
+import { mkdtempSync, writeFileSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import test from 'node:test';
+
+const scriptsDir = join(fileURLToPath(import.meta.url), '..');
+
+function runCheck(dir, extraArgs = []) {
+  return spawnSync(
+    process.execPath,
+    [join(scriptsDir, 'check-release-config.mjs'), ...extraArgs],
+    { cwd: dir, encoding: 'utf8' },
+  );
+}
+
+test('check-release-config rejects localhost hub', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
+  writeFileSync(
+    join(dir, 'build-config.json'),
+    JSON.stringify({
+      defaultHubUrl: 'http://127.0.0.1:8765',
+      enableOpsTools: false,
+    }),
+  );
+  mkdirSync(join(dir, 'resources'), { recursive: true });
+  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
+  const r = runCheck(dir);
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr + r.stdout, /localhost/i);
+});
+
+test('check-release-config rejects enableOpsTools true', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
+  writeFileSync(
+    join(dir, 'build-config.json'),
+    JSON.stringify({
+      defaultHubUrl: 'https://hub.example.com',
+      enableOpsTools: true,
+    }),
+  );
+  mkdirSync(join(dir, 'resources'), { recursive: true });
+  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
+  const r = runCheck(dir);
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr + r.stdout, /enableOpsTools/);
+});
+
+test('check-release-config accepts valid prod config', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
+  writeFileSync(
+    join(dir, 'build-config.json'),
+    JSON.stringify({
+      defaultHubUrl: 'https://hub.example.com',
+      enableOpsTools: false,
+    }),
+  );
+  mkdirSync(join(dir, 'resources'), { recursive: true });
+  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
+  const r = runCheck(dir);
+  assert.equal(r.status, 0);
+});
+
+test('check-release-config ops channel skips', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
+  writeFileSync(
+    join(dir, 'build-config.json'),
+    JSON.stringify({
+      defaultHubUrl: 'http://127.0.0.1:8765',
+      enableOpsTools: true,
+    }),
+  );
+  const r = runCheck(dir, ['--channel', 'ops']);
+  assert.equal(r.status, 0);
+});

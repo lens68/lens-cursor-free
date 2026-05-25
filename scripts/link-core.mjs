@@ -28,12 +28,19 @@ if (existsSync(shellCfg)) {
   process.exit(1);
 }
 
-console.log(`link-core: building ${corePath}`);
-const build = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'build'], {
+const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const npmOpts = {
   cwd: corePath,
   stdio: 'inherit',
   shell: process.platform === 'win32',
-});
+};
+
+console.log(`link-core: npm ci in ${corePath}`);
+const ci = spawnSync(npm, ['ci'], npmOpts);
+if (ci.status !== 0) process.exit(ci.status ?? 1);
+
+console.log(`link-core: npm run build in ${corePath}`);
+const build = spawnSync(npm, ['run', 'build'], npmOpts);
 if (build.status !== 0) process.exit(build.status ?? 1);
 
 mkdirSync(join(root, 'node_modules', '@relay'), { recursive: true });

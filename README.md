@@ -36,7 +36,8 @@
 | 商品 | 说明 | 链接 |
 |------|------|------|
 | **许可证** | 客户端授权与套餐服务，验证后即可使用 | [购买许可证](https://pay.ldxp.cn/shop/632TMTXE) |
-| **配套服务** | 更多使用方式与售后支持，请咨询客服 | [加入 QQ 群](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037) |
+
+套餐续期、使用问题等可加 QQ 群联系客服。
 
 ---
 

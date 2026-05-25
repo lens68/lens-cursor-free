@@ -1,83 +1,76 @@
-# Relay — 开源信任层
+<div align="center">
 
-Relay 桌面客户端的**可审计开源部分**：界面、Electron 壳、IPC 契约与设计系统。
+<img src="resources/icon.png" width="96" height="96" alt="Relay" />
 
-## 本仓库包含什么
+# Relay · Cursor 账号助手
 
-- `ui/` — 用户界面与样式
-- `electron/preload.cjs` — 渲染进程可调用的 IPC 面（`window.cursorFree`）
-- `electron/main.ts` — 窗口、托盘与生命周期（薄壳）
-- `core-api/` — 与核心模块的**类型契约**（无商业逻辑实现）
-- `shared/` — 产品文案、构建标志、Hub URL 解析等开放配置
+**Cursor 账号切换助手** — 购买许可证并验证后，为本机 Cursor 管理登录状态，按需求灵活购买套餐。
 
-## 本仓库不包含什么
+[![下载最新版](https://img.shields.io/badge/下载最新版-点击这里-blue?style=for-the-badge&logo=github)](https://github.com/lens68/lens-cursor-free/releases/latest)
+[![购买许可证](https://img.shields.io/badge/购买许可证-立即购买-orange?style=for-the-badge)](https://pay.ldxp.cn/shop/632TMTXE)
 
-以下能力在私有仓库 **`lens-cursor-free-core`** 中维护，不在此公开：
+---
 
-- 许可证校验与租约策略
-- 换号 / 占号流水线
-- Cursor 注入与设备指纹
-- Hub 协议客户端实现
+### 扫码加入 QQ 群（勿搜索群号），使用交流与问题反馈
 
-普通用户请从 [Releases](https://github.com/lens68/lens-cursor-free/releases) 下载安装包，无需自行构建完整产品。
+[![加入 QQ 群](img/qq-group.jpg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037)
 
-## 为何开源
+也可 [点击链接加群](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037)
 
-公开 UI 与 IPC 边界，便于社区审查「客户端对用户展示了什么、调用了哪些通道」，建立信任。商业核心保持私有，由维护者在 CI 中联合构建后发布二进制。
+</div>
 
-## 参与贡献
+---
 
-欢迎针对 `ui/`、`core-api/` 类型与文档的 Pull Request。请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 与 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+## 软件截图
 
-### 构建能力说明
+> 客户端支持 **Windows**、**macOS**（下图以 Windows 为例）
 
-| 目标 | 是否可在本公开仓完成 | 配置如何注入 |
-|------|----------------------|--------------|
-| 信任层编译（`npm run build`） | **可以**（默认 `@relay/core` stub） | 无 `build-config.json` 时自动从 `build-config.local.example.json` 生成；`prebuild` 写入 `shared/build-config.ts` |
-| 完整安装包 / 换号能力 | **不可以单独完成** | 需私有仓 + `npm run link:core`；本机维护 **`build-config.json`**（真实 Hub/购买链接，已 gitignore），再 `npm run dist:prod` |
-| GitHub Release（打 `v*` tag） | 维护者 CI | `RELAY_CORE_DEPLOY_KEY` + `BUILD_CONFIG_JSON`（真实 JSON，非 example）；并行构建 **Windows + macOS** |
+| 验证许可证 | 切换账号 |
+|:---:|:---:|
+| <img width="360" alt="粘贴许可证并验证" src="img/screenshot1.png" /> | <img width="360" alt="许可证有效，可以切换账号" src="img/screenshot2.png" /> |
 
-仓库内**只提交模板**：`build-config.*.example.json` 与占位符版 `shared/build-config.ts`；真实 Hub / 购买链接等写在 **gitignore 的** `build-config.json` 或 CI Secret 中，构建时自动生成，勿手改 `shared/build-config.ts`。
+---
 
-### 本地开发（仅信任层 + stub）
+## 购买
 
-```bash
-npm ci
-npm run build    # 自动 ensure 本地 example → build-config.json → gen-build-config
-npm test
-```
+| 商品 | 说明 | 链接 |
+|------|------|------|
+| **许可证** | 客户端授权与套餐服务，验证后即可使用 | [购买许可证](https://pay.ldxp.cn/shop/632TMTXE) |
+| **配套服务** | 更多使用方式与售后支持，请咨询客服 | [加入 QQ 群](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=e6rOLUD1dybhaXs5BTr4n1tonVO1yBps&authKey=j56lorByyrvMSYud6dUm9%2FTw4F2vSJjfoiEqvCRDz7CE9RFDc94tl%2FxYKrrU8ngx&noverify=0&group_code=1104541037) |
 
-完整产品构建（**仅维护者**，需已授权访问私有核心仓库；发版与 Secrets 见私有仓 `docs/RELEASE-SETUP.md`）：
+---
 
-```bash
-git clone git@github.com:lens68/lens-cursor-free-core.git   # 与本作库同级目录
-# 在本仓库根目录创建 build-config.json（勿提交），填入真实 defaultHubUrl / purchaseUrl 等
-npm run link:core
-npm run icon          # 生成 icon.ico + icon.png（Win / Mac）
-npm run dist:prod     # 当前系统：Windows → NSIS；macOS → DMG + ZIP
-# 或显式：npm run dist:win / npm run dist:mac
-npm start             # 开发运行（需 link:core + build）
-```
+## 下载
 
-`npm run dist:prod` 会拒绝仍含 `hub.your-domain.com`、`shop.example.com` 等**模板占位**的配置；CI 通过 Secret `BUILD_CONFIG_JSON` 写入同等结构的 JSON。
+| 系统 | 安装包 |
+|------|--------|
+| Windows | [Releases](https://github.com/lens68/lens-cursor-free/releases/latest) 中的 `Relay-Setup-*.exe` |
+| macOS（Apple 芯片） | `Relay-*-arm64.dmg` |
+| macOS（Intel） | `Relay-*-x64.dmg` |
 
-### macOS 功能说明
+---
 
-| 能力 | macOS 支持情况 |
-|------|----------------|
-| Hub / 许可证 / 占号 UI | 支持（与 Windows 相同） |
-| Cursor 路径 / `state.vscdb` / `machineId` | 支持（`~/Library/Application Support/Cursor/...`） |
-| 关窗口保留占号 | 支持（关窗口不退出，需 **Dock 再点图标** 或 **Cmd+Q** 退出） |
-| 换号 / 注入 | 支持，但依赖本机 **Node.js 22+**（`PATH` 或 `CURSOR_FREE_NODE`），与 Windows 安装包相同 |
-| Cursor 安装位置 | 默认 `/Applications/Cursor.app` |
-| 首次打开未签名包 | 可能需右键「打开」或 `xattr -cr`（CI 未做 Apple 签名） |
+## 常见问题
 
-macOS 版与 Windows 共用私有核心；发版前请在实机 Mac 上验证一次完整换号流程。
+- **macOS 首次打不开？** 未签名安装包可能需对 `.dmg` / `Relay.app` 右键「打开」，或终端执行 `xattr -cr /Applications/Relay.app`。
+- **macOS 无法切换账号？** 请安装 **Node.js 22+**（`PATH` 可用，或设置环境变量 `CURSOR_FREE_NODE`）。
+- **套餐用完了？** 在商店续期或升级，或 QQ 群联系客服。
 
-## 安全反馈
+---
 
-请通过 GitHub Security Advisories 或仓库 Issue 联系维护者（勿在公开 Issue 中粘贴许可证密钥或 Hub 管理凭据）。
+本仓库公开客户端界面、IPC 与部分基础组件；完整商业能力以 [Releases](https://github.com/lens68/lens-cursor-free/releases) 发布版本为准。
 
-## 许可证
+## 免责声明
+
+> [!WARNING]
+> - 本工具仅供学习交流，使用本工具所产生的任何后果由使用者自行承担。
+
+---
+
+## 开发者
+
+- [docs/DEVELOPERS.md](docs/DEVELOPERS.md) — 构建与发版
+- [CONTRIBUTING.md](CONTRIBUTING.md) — 贡献范围
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 架构说明
 
 [MIT](LICENSE)

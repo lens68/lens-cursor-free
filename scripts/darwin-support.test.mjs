@@ -38,4 +38,12 @@ test('electron-builder mac target and icon.png extraResource', () => {
   assert.ok(extra.some((e) => e.to === 'daemon'));
   const macTargets = pkg.build?.mac?.target ?? [];
   assert.ok(macTargets.some((t) => t.target === 'dmg'));
+  const dmg = macTargets.find((t) => t.target === 'dmg');
+  assert.ok(!dmg?.arch?.length, 'mac arch comes from CI --arm64/--x64, not package.json');
+});
+
+test('run-dist-prod uses electron-builder arch flags for mac', () => {
+  const src = readFileSync(join(root, 'scripts', 'run-dist-prod.mjs'), 'utf8');
+  assert.match(src, /--arm64|--x64/);
+  assert.doesNotMatch(src, /-c\.mac\.target/);
 });

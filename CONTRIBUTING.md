@@ -1,5 +1,7 @@
 # 贡献指南
 
+完整构建、发版与 macOS 说明见 [docs/DEVELOPERS.md](docs/DEVELOPERS.md)。
+
 ## 范围
 
 本仓库仅接受**信任层**相关改动：

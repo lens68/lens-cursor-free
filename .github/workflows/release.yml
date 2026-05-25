@@ -60,6 +60,7 @@ jobs:
           BUILD_CONFIG_JSON: ${{ secrets.BUILD_CONFIG_JSON }}
           RELAY_CORE_PATH: ${{ github.workspace }}/lens-cursor-free-core
           RELAY_DIST_PLATFORM: ${{ matrix.platform }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         working-directory: lens-cursor-free
         run: |
           npm ci

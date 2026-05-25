@@ -43,10 +43,10 @@ run('node', ['scripts/pre-dist-clean.mjs']);
 const outputDir = readOutputDir();
 run('node', ['scripts/check-release-config.mjs', '--platform', platform]);
 run('node', ['scripts/require-local-core.mjs']);
-run('npm', ['run', 'build:full']);
+run('npm', ['run', 'build']);
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-const ebArgs = [`-c.directories.output=${outputDir}`];
+const ebArgs = ['-c.publish=never', `-c.directories.output=${outputDir}`];
 if (dirOnly) ebArgs.unshift('--dir');
 if (platform === 'win') {
   ebArgs.unshift('--win', '--x64');

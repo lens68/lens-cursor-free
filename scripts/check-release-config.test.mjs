@@ -16,6 +16,14 @@ function runCheck(dir, extraArgs = []) {
   );
 }
 
+/** Prod gate needs win (.ico) and mac (.png) icons — CI runners differ by OS. */
+function writeReleaseIcons(dir) {
+  mkdirSync(join(dir, 'resources'), { recursive: true });
+  const stub = Buffer.from([0]);
+  writeFileSync(join(dir, 'resources', 'icon.ico'), stub);
+  writeFileSync(join(dir, 'resources', 'icon.png'), stub);
+}
+
 test('check-release-config rejects placeholder hub', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
   writeFileSync(
@@ -26,9 +34,8 @@ test('check-release-config rejects placeholder hub', () => {
       enableOpsTools: false,
     }),
   );
-  mkdirSync(join(dir, 'resources'), { recursive: true });
-  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
-  const r = runCheck(dir);
+  writeReleaseIcons(dir);
+  const r = runCheck(dir, ['--platform', 'win']);
   assert.notEqual(r.status, 0);
   assert.match(r.stderr + r.stdout, /defaultHubUrl/i);
 });
@@ -43,9 +50,8 @@ test('check-release-config rejects localhost hub', () => {
       enableOpsTools: false,
     }),
   );
-  mkdirSync(join(dir, 'resources'), { recursive: true });
-  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
-  const r = runCheck(dir);
+  writeReleaseIcons(dir);
+  const r = runCheck(dir, ['--platform', 'win']);
   assert.notEqual(r.status, 0);
   assert.match(r.stderr + r.stdout, /127\.0\.0\.1|production URL/i);
 });
@@ -60,14 +66,13 @@ test('check-release-config rejects enableOpsTools true', () => {
       enableOpsTools: true,
     }),
   );
-  mkdirSync(join(dir, 'resources'), { recursive: true });
-  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
-  const r = runCheck(dir);
+  writeReleaseIcons(dir);
+  const r = runCheck(dir, ['--platform', 'win']);
   assert.notEqual(r.status, 0);
   assert.match(r.stderr + r.stdout, /enableOpsTools/);
 });
 
-test('check-release-config accepts valid prod config', () => {
+test('check-release-config accepts valid prod config (win)', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
   writeFileSync(
     join(dir, 'build-config.json'),
@@ -77,9 +82,23 @@ test('check-release-config accepts valid prod config', () => {
       enableOpsTools: false,
     }),
   );
-  mkdirSync(join(dir, 'resources'), { recursive: true });
-  writeFileSync(join(dir, 'resources', 'icon.ico'), Buffer.from([0]));
-  const r = runCheck(dir);
+  writeReleaseIcons(dir);
+  const r = runCheck(dir, ['--platform', 'win']);
+  assert.equal(r.status, 0);
+});
+
+test('check-release-config accepts valid prod config (mac)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-chk-'));
+  writeFileSync(
+    join(dir, 'build-config.json'),
+    JSON.stringify({
+      defaultHubUrl: 'https://hub.vendor.example',
+      purchaseUrl: 'https://pay.vendor.example/shop',
+      enableOpsTools: false,
+    }),
+  );
+  writeReleaseIcons(dir);
+  const r = runCheck(dir, ['--platform', 'mac']);
   assert.equal(r.status, 0);
 });
 

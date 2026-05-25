@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/** link:core + build. Runs `npm ci` only if deps missing — never re-ci after link (stub would win). */
+import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +18,8 @@ function run(args, opts = {}) {
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 
+if (!existsSync(join(root, 'node_modules', 'typescript', 'package.json'))) {
+  run(['ci']);
+}
 run(['run', 'link:core']);
-run(['ci']);
 run(['run', 'build']);

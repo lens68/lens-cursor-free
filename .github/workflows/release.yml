@@ -55,23 +55,16 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Inject production build-config from secret
+      - name: Install deps, inject config, build and dist (${{ matrix.platform }})
         env:
           BUILD_CONFIG_JSON: ${{ secrets.BUILD_CONFIG_JSON }}
-        working-directory: lens-cursor-free
-        run: node scripts/write-build-config-from-secret.mjs
-
-      - name: Generate icons
-        working-directory: lens-cursor-free
-        run: npm run icon
-
-      - name: Full build and dist (${{ matrix.platform }})
-        env:
           RELAY_CORE_PATH: ${{ github.workspace }}/lens-cursor-free-core
           RELAY_DIST_PLATFORM: ${{ matrix.platform }}
         working-directory: lens-cursor-free
         run: |
           npm ci
+          node scripts/write-build-config-from-secret.mjs
+          npm run icon
           node scripts/link-core.mjs
           node scripts/require-local-core.mjs
           npm run build

@@ -4,5 +4,6 @@
   "private": true,
   "description": "Stub @relay/core for public-repo CI and UI-only development",
   "type": "module",
-  "main": "index.js"
+  "main": "index.js",
+  "types": "index.d.ts"
 }

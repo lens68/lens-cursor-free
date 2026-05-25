@@ -24,6 +24,7 @@
 
 ## 构建
 
-- `npm run build` — stub 或已 link 的 `@relay/core`
+- `npm run build` — stub 或已 link 的 `@relay/core`；`prebuild` 从 `build-config.json`（缺省则 `*.example.json`）生成 `shared/build-config.ts`
 - `npm run link:core` — 链接已克隆的私有核心包（见维护者文档，路径因环境而异）
 - `npm run build:full` — link + build + 发版前完整构建
+- 生产发版：`BUILD_CONFIG_JSON`（Actions Secret）或 `node scripts/prepare-build-config.mjs prod`（维护者本机，保留非占位字段）

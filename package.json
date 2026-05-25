@@ -7,7 +7,7 @@
   "main": "dist/electron/main.js",
   "scripts": {
     "link:core": "node scripts/link-core.mjs",
-    "prebuild": "node scripts/gen-app-version.mjs && node scripts/gen-build-config.mjs",
+    "prebuild": "node scripts/ensure-build-config.mjs && node scripts/gen-app-version.mjs && node scripts/gen-build-config.mjs",
     "build": "npm run prebuild && tsc -p tsconfig.json && node scripts/gen-user-messages.mjs && node scripts/copy-shell-assets.mjs",
     "build:full": "node scripts/build-full.mjs",
     "pretest": "tsc -p tsconfig.json",

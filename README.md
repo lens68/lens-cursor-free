@@ -29,11 +29,21 @@ Relay 桌面客户端的**可审计开源部分**：界面、Electron 壳、IPC 
 
 欢迎针对 `ui/`、`core-api/` 类型与文档的 Pull Request。请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 与 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
+### 构建能力说明
+
+| 目标 | 是否可在本公开仓完成 | 配置如何注入 |
+|------|----------------------|--------------|
+| 信任层编译（`npm run build`） | **可以**（默认 `@relay/core` stub） | 无 `build-config.json` 时自动从 `build-config.local.example.json` 生成；`prebuild` 写入 `shared/build-config.ts` |
+| 完整安装包 / 换号能力 | **不可以单独完成** | 需私有仓 `lens-cursor-free-core` + `npm run link:core`；生产参数由维护者本地 `prepare-build-config prod` 或 CI Secret `BUILD_CONFIG_JSON` 注入 |
+| GitHub Release（打 `v*` tag） | 维护者 CI | `RELAY_CORE_DEPLOY_KEY` + `BUILD_CONFIG_JSON`（见私有仓 `docs/RELEASE-SETUP.md`） |
+
+仓库内**只提交模板**：`build-config.*.example.json` 与占位符版 `shared/build-config.ts`；真实 Hub / 购买链接等写在 **gitignore 的** `build-config.json` 或 CI Secret 中，构建时自动生成，勿手改 `shared/build-config.ts`。
+
 ### 本地开发（仅信任层 + stub）
 
 ```bash
 npm ci
-npm run build    # 默认使用 packages/core-stub，可编译 UI 与壳
+npm run build    # 自动 ensure 本地 example → build-config.json → gen-build-config
 npm test
 ```
 

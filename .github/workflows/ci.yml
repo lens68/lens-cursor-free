@@ -17,9 +17,6 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Use example build-config
-        run: Copy-Item build-config.local.example.json build-config.json
-
       - run: npm ci
       - run: npm run build
       - run: npm test

@@ -34,6 +34,8 @@ test('verify-packaged-daemon checks Relay.app Contents/Resources/daemon', () => 
 test('electron-builder mac target and icon.png extraResource', () => {
   assert.ok(pkg.build?.mac?.icon?.includes('icon.png'));
   const extra = pkg.build?.extraResources ?? [];
-  assert.ok(extra.some((e) => e.to && e.to === 'icon.png'));
+  assert.ok(extra.some((e) => e.to === 'icon.png'));
   assert.ok(extra.some((e) => e.to === 'daemon'));
+  const macTargets = pkg.build?.mac?.target ?? [];
+  assert.ok(macTargets.some((t) => t.target === 'dmg'));
 });

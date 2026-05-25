@@ -21,9 +21,18 @@ jobs:
         include:
           - runner: windows-latest
             platform: win
+            mac_arch: ''
           - runner: macos-latest
             platform: mac
+            mac_arch: arm64
+          - runner: macos-latest
+            platform: mac
+            mac_arch: x64
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,30 +64,38 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install deps, inject config, build and dist (${{ matrix.platform }})
+      - name: Install deps, inject config, build and dist (${{ matrix.platform }}${{ matrix.mac_arch && format(' {0}', matrix.mac_arch) || '' }})
         env:
           BUILD_CONFIG_JSON: ${{ secrets.BUILD_CONFIG_JSON }}
           RELAY_CORE_PATH: ${{ github.workspace }}/lens-cursor-free-core
           RELAY_DIST_PLATFORM: ${{ matrix.platform }}
+          RELAY_MAC_ARCH: ${{ matrix.mac_arch }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         working-directory: lens-cursor-free
         run: |
+          set -euxo pipefail
+          echo "::group::npm ci"
           npm ci
+          echo "::endgroup::"
           node scripts/write-build-config-from-secret.mjs
           npm run icon
+          echo "::group::link-core"
           node scripts/link-core.mjs
+          echo "::endgroup::"
           node scripts/require-local-core.mjs
           npm run build
           npm test
+          echo "::group::electron-builder (${{ matrix.platform }} ${{ matrix.mac_arch }})"
           node scripts/run-dist-prod.mjs --${{ matrix.platform }}
+          echo "::endgroup::"
+          ls -la release/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: relay-${{ matrix.platform }}
+          name: relay-${{ matrix.platform }}${{ matrix.mac_arch && format('-{0}', matrix.mac_arch) || '' }}
           path: |
             lens-cursor-free/release/Relay-Setup-*.exe
             lens-cursor-free/release/Relay-*.dmg
-            lens-cursor-free/release/Relay-*.zip
           if-no-files-found: error
 
   release:

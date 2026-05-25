@@ -51,7 +51,9 @@ if (dirOnly) ebArgs.unshift('--dir');
 if (platform === 'win') {
   ebArgs.unshift('--win', '--x64');
 } else {
-  ebArgs.unshift('--mac', '--x64');
+  const macArch = process.env.RELAY_MAC_ARCH?.trim() || 'arm64';
+  console.log(`run-dist-prod: mac electron-builder arch=${macArch}`);
+  ebArgs.unshift('--mac', `--${macArch}`);
 }
 
 run(

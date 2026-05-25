@@ -37,6 +37,8 @@ npm run build    # 默认使用 packages/core-stub，可编译 UI 与壳
 npm test
 ```
 
+维护者配置 GitHub Actions Secrets：见 [docs/RELEASE-SETUP.md](docs/RELEASE-SETUP.md)。
+
 完整产品构建（**仅维护者**，需已授权访问私有核心仓库）：
 
 ```bash

@@ -37,9 +37,7 @@ npm run build    # 默认使用 packages/core-stub，可编译 UI 与壳
 npm test
 ```
 
-维护者配置 GitHub Actions Secrets：见 [docs/RELEASE-SETUP.md](docs/RELEASE-SETUP.md)。
-
-完整产品构建（**仅维护者**，需已授权访问私有核心仓库）：
+完整产品构建（**仅维护者**，需已授权访问私有核心仓库；发版与 Secrets 配置见私有仓文档）：
 
 ```bash
 git clone git@github.com:lens68/lens-cursor-free-core.git   # 与本作库同级目录

@@ -44,7 +44,7 @@ test('prepare-build-config prod keeps local supportUrl over example placeholder'
     join(dir, 'build-config.json'),
     `${JSON.stringify(
       {
-        defaultHubUrl: 'https://relay.dns0.top',
+        defaultHubUrl: 'https://hub.prod.example.com',
         supportUrl: 'https://support.example.com/qq',
         purchaseUrl: 'https://pay.example.com/x',
         enableOpsTools: false,
@@ -61,7 +61,7 @@ test('prepare-build-config prod keeps local supportUrl over example placeholder'
   assert.equal(r.status, 0, r.stderr || r.stdout);
   const cfg = JSON.parse(readFileSync(join(dir, 'build-config.json'), 'utf8'));
   assert.equal(cfg.supportUrl, 'https://support.example.com/qq');
-  assert.equal(cfg.purchaseUrl, 'https://pay.ldxp.cn/shop/632TMTXE');
+  assert.equal(cfg.purchaseUrl, 'https://pay.example.com/x');
 });
 
 test('prepare-build-config ops enables ops tools', () => {
